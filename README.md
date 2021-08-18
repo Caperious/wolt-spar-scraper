@@ -17,7 +17,7 @@ docker build -t spar-scrapper .
 This command binds the current volume to the application. This is needed because the Spar.xlsx file must be present in this folder, for the scraper to be
 able to read which products to visit. v
 ```shell
-docker run -it --mount src=`pwd`,target=/app,type=bind spar-scrapper
+docker run -it -v ${PWD}/spar_excel:/app/spar_excel spar-scrapper
 ```
 
 ## Running locally
