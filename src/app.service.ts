@@ -24,7 +24,7 @@ export class AppService {
       );
       const ids: number[] = WoltExcelHelper.getFirstColumn(rows);
 
-      const products = await this.sparService.scrapeProducts(ids.splice(0, 100));
+      const products = await this.sparService.scrapeProducts(ids);
       // const products = await this.sparService.scrapeProducts([
       //   11696,
       //   32506,
