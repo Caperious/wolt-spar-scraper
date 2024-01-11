@@ -31,6 +31,9 @@ export class SparService {
     const html = await this.httpService
       .get(`https://www.spar.si/online/p/${id}`, {
         responseType: 'text',
+        headers: {
+          'User-Agent': 'wolt-crawler-bot',
+        }
       })
       .toPromise();
 
