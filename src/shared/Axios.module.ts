@@ -1,7 +1,7 @@
 import { Global, } from '@nestjs/common';
 
 import { Module } from '@nestjs/common';
-import { HttpModule, HttpService } from '@nestjs/axios';
+import { HttpModule } from '@nestjs/axios';
 
 @Global()
 @Module({

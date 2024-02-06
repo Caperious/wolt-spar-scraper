@@ -1,20 +1,32 @@
 import { HttpService, Injectable, Logger, LoggerService } from '@nestjs/common';
 import cheerio from 'cheerio';
-import { catchError } from 'rxjs/operators';
+import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable()
 export class SparService {
   private readonly logger = new Logger(SparService.name);
-  constructor(private httpService: HttpService) {}
+
+  constructor(private httpService: HttpService) {
+  }
+
   /**
    * Scrapes the products from the spar online website, by the provided SKU-s
    * @param skuArray
    */
   async scrapeProducts(ids: number[]) {
     const products = [];
-    for (const id of ids) {
+
+    this.logger.log(`Scrapping ${ids.length} products`);
+
+    const sleepTimer = this.getSleepTimer();
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i];
+
+      this.logger.log(`Scrapping product with id ${id}. ${i + 1} / ${ids.length}`)
       try {
         products.push(await this.scrapeProduct(id));
+
+        await sleep(sleepTimer);
       } catch (e) {
         this.logger.error(e);
       }
@@ -33,7 +45,7 @@ export class SparService {
         responseType: 'text',
         headers: {
           'User-Agent': 'wolt-crawler-bot',
-        }
+        },
       })
       .toPromise();
 
@@ -47,7 +59,7 @@ export class SparService {
     if (title === 'izdelek ni najden') {
       this.logger.warn(`Product with id ${id} not found`);
       return {
-        id
+        id,
       };
     }
 
@@ -105,7 +117,7 @@ export class SparService {
 
     const foodEnergy = {};
 
-    foodEnergy['Povprečna hranilna vrednost na'] = $('dl').first().text().trim()
+    foodEnergy['Povprečna hranilna vrednost na'] = $('dl').first().text().trim();
     for (const el of foodEnergyTexts) {
       const key = $('dt.bold', el)
         .text()
@@ -130,8 +142,22 @@ export class SparService {
       ...foodEnergy,
     };
   }
+
+  private getSleepTimer = () => {
+    const requestsPerMinuteString = process.env.REQUESTS_PER_MINUTE;
+    const requestsPerMinute = parseInt(requestsPerMinuteString) || 60;
+    this.logger.log('REQUESTS_PER_MINUTE: ' + requestsPerMinute);
+    const sleepTimer = 60000 / requestsPerMinute;
+    this.logger.log('Sleeping between requests: ' + sleepTimer +'ms');
+    return sleepTimer;
+  };
 }
 
+const sleep = async (time: number) => {
+  await new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
+};
 //
 // // Ime --
 // // Številka izdelka

@@ -9,6 +9,8 @@ COPY tsconfig.json /app
 COPY nest-cli.json /app
 COPY .env /app
 
+ENV REQUESTS_PER_MINUTE=60
+
 WORKDIR /app
 
 RUN npm install
