@@ -1,6 +1,6 @@
-import { HttpService, Injectable, Logger, LoggerService } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger } from '@nestjs/common';
 import cheerio from 'cheerio';
-import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable()
 export class SparService {
@@ -22,7 +22,7 @@ export class SparService {
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
 
-      this.logger.log(`Scrapping product with id ${id}. ${i + 1} / ${ids.length}`)
+      this.logger.log(`Scrapping product with id ${id}. ${i + 1} / ${ids.length}`);
       try {
         products.push(await this.scrapeProduct(id));
 
@@ -148,7 +148,7 @@ export class SparService {
     const requestsPerMinute = parseInt(requestsPerMinuteString) || 60;
     this.logger.log('REQUESTS_PER_MINUTE: ' + requestsPerMinute);
     const sleepTimer = 60000 / requestsPerMinute;
-    this.logger.log('Sleeping between requests: ' + sleepTimer +'ms');
+    this.logger.log('Sleeping between requests: ' + sleepTimer + 'ms');
     return sleepTimer;
   };
 }
