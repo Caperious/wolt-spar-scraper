@@ -20,6 +20,11 @@ able to read which products to visit. v
 docker run -it -v ${PWD}/spar_excel:/app/spar_excel spar-scrapper
 ```
 
+You can manually set the pause between requests, the default wait time between is 1seconds (60 requests / minute)
+```shell
+docker run -it -v ${PWD}/spar_excel:/app/spar_excel -e REQUESTS_PER_MINUTE=30 spar-scrapper 
+```
+
 ## Running locally
 
 ### Installing the packages
